@@ -1,23 +1,23 @@
-# Project Progress Web
+# SAE Project Progress Web
 
-Prototype dashboard inspired by the supplied Fixture Progress screenshot.
+This version uses **only the `SAE` sheet** from `TNES SAE Summary Data.xlsx`.
 
-## Included
-- Dashboard tổng quan nhiều dự án
-- Project pipeline & bottleneck analysis
-- Project list + search/filter
-- Tasks
-- Timeline
-- Alerts
-- Notifications
-- Users
-- Google Sheet connection placeholder
-- CSV import/export
-- New Project modal
-- Responsive layout
+Included:
+- Dashboard
+- Project portfolio
+- SAE item search/filter
+- Build and manufacturer analysis
+- Timeline based on SAE dates
+- Alerts based on SAE fields
+- Local comment/reply area (does not modify source SAE data)
+- CSV export
 
-## Run
-Open `index.html` directly in a browser, or use VS Code Live Server.
+Data source:
+- 122 SAE records
+- 107 SAE columns
 
-## Next step
-Connect the `projects` and `tasks` arrays in `app.js` to Google Sheets / Supabase. For internal company data, do not publish sensitive Google Sheets publicly.
+To deploy on GitHub Pages, upload:
+- index.html
+- style.css
+- app.js
+- sae_data.json

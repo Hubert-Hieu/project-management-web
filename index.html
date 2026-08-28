@@ -1,100 +1,104 @@
-<!DOCTYPE html>
-<html lang="vi">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project Progress</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAE Project Progress</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand"><span class="brand-icon">⚒</span><span>Project Progress</span></div>
-    <div class="role">Admin</div>
-    <nav>
-      <a class="active" data-section="dashboard">📊 <span>Dashboard</span></a>
-      <a data-section="projects">📁 <span>Projects</span></a>
-      <a data-section="tasks">📋 <span>Tasks</span></a>
-      <a data-section="alerts">⚠️ <span>Alerts</span></a>
-      <div class="nav-label">ANALYSIS</div>
-      <a data-section="search">🔎 <span>Search</span></a>
-      <a data-section="timeline">🗓️ <span>Timeline</span></a>
-      <a data-section="calendar">📅 <span>Calendar</span></a>
-      <a data-section="performance">📈 <span>Performance</span></a>
-      <a data-section="notifications">🔔 <span>Notifications</span><b class="badge">3</b></a>
-      <a data-section="sheets">📊 <span>Google Sheet</span></a>
-      <div class="nav-label">SYSTEM</div>
-      <a data-section="users">👥 <span>Users</span></a>
-      <a data-section="audit">📜 <span>Audit Log</span></a>
-      <a data-section="settings">⚙️ <span>Settings</span></a>
-    </nav>
-    <a class="logout" onclick="alert('Demo: logout')">↪️ <span>Logout</span></a>
-  </aside>
+<aside class="sidebar">
+  <div class="brand">🔧 <b>SAE Progress</b><span>Internal</span></div>
+  <nav>
+    <a class="active" data-view="dashboard">📊 Dashboard</a>
+    <a data-view="projects">📁 Projects</a>
+    <a data-view="items">📋 SAE Items</a>
+    <a data-view="timeline">📅 Timeline</a>
+    <a data-view="alerts">⚠️ Alerts</a>
+    <a data-view="messages">💬 Messages</a>
+  </nav>
+  <div class="side-note">Source<br><b>SAE sheet only</b></div>
+</aside>
 
-  <main class="main">
-    <header class="topbar">
-      <div class="mobile-brand">Project Progress</div>
-      <div class="top-actions">
-        <button onclick="downloadCSV()">📥 Excel</button>
-        <label class="file-btn">📤 Import<input type="file" id="csvFile" accept=".csv" hidden></label>
-        <button onclick="showToast('Báo cáo tuần đã được tạo')">📋 Weekly</button>
-        <button onclick="showToast('Chế độ tối demo')">🌙</button>
-        <button onclick="showToast('Language: 中文 / Tiếng Việt')">中文</button>
-        <span class="online">● Online</span>
-      </div>
-    </header>
+<main>
+<header class="topbar">
+  <div>
+    <h1 id="pageTitle">Dashboard</h1>
+    <p>SAE project tracking • data from the <b>SAE</b> sheet only</p>
+  </div>
+  <div class="actions">
+    <button onclick="location.reload()">↻ Refresh</button>
+    <button onclick="exportCSV()">⬇ Export CSV</button>
+  </div>
+</header>
 
-    <section id="dashboard" class="page active-page">
-      <div class="page-title-row"><div><h1>Dashboard</h1><p class="sub">Tổng quan tiến độ tất cả dự án</p></div><select id="projectFilter" onchange="renderDashboard()"><option value="all">Tất cả dự án</option></select></div>
-      <div class="cards">
-        <div class="card blue"><span>Total Projects</span><strong id="totalProjects">0</strong><small>Tracked in project system</small></div>
-        <div class="card orange"><span>In Progress</span><strong id="inProgress">0</strong><small>Projects đang thực hiện</small></div>
-        <div class="card red"><span>Severe Delay</span><strong id="severeDelay">0</strong><small>Quá hạn trên 3 ngày</small></div>
-        <div class="card green"><span>Completed</span><strong id="completed">0</strong><small>Đã hoàn thành</small></div>
-      </div>
+<section id="dashboard" class="view active">
+  <div class="cards" id="cards"></div>
 
-      <div class="panel">
-        <div class="panel-title">🔄 Project Pipeline <span>(click để xem chi tiết)</span></div>
-        <div class="pipeline" id="pipeline"></div>
-      </div>
+  <div class="panel">
+    <div class="panel-title">Project Portfolio <span id="projectCount"></span></div>
+    <div id="projectTable"></div>
+  </div>
 
-      <div class="panel">
-        <div class="panel-title">📍 Bottleneck Analysis</div>
-        <div class="bottlenecks" id="bottlenecks"></div>
-      </div>
+  <div class="grid2">
+    <div class="panel">
+      <div class="panel-title">Build Distribution</div>
+      <div id="buildChart" class="bars"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Fixture Manufacturer</div>
+      <div id="manufacturerChart" class="bars"></div>
+    </div>
+  </div>
+</section>
 
-      <div class="grid2">
-        <div class="panel"><div class="panel-title">📦 Projects by Manager</div><div id="managerChart"></div></div>
-        <div class="panel"><div class="panel-title">📅 Upcoming Deadlines <span class="pill">7d</span></div><div id="upcoming"></div></div>
-      </div>
-    </section>
+<section id="projects" class="view">
+  <div class="panel">
+    <div class="toolbar">
+      <input id="projectSearch" placeholder="Search project, build, PIC, vendor..." oninput="renderProjects()">
+    </div>
+    <div id="projectsTable"></div>
+  </div>
+</section>
 
-    <section id="projects" class="page">
-      <div class="page-title-row"><div><h1>Projects</h1><p class="sub">Quản lý nhiều dự án cùng lúc</p></div><button class="primary" onclick="openProjectModal()">＋ New Project</button></div>
-      <div class="toolbar"><input id="projectSearch" placeholder="🔎 Tìm dự án..." oninput="renderProjects()"><select id="statusSearch" onchange="renderProjects()"><option value="all">Tất cả trạng thái</option><option>In Progress</option><option>Completed</option><option>Delayed</option><option>Planning</option></select></div>
-      <div class="table-wrap"><table><thead><tr><th>Project</th><th>Manager</th><th>Stage</th><th>Progress</th><th>Deadline</th><th>Status</th><th></th></tr></thead><tbody id="projectTable"></tbody></table></div>
-    </section>
+<section id="items" class="view">
+  <div class="panel">
+    <div class="toolbar">
+      <input id="itemSearch" placeholder="Search SAE item / spec / vendor..." oninput="renderItems()">
+      <select id="projectFilter" onchange="renderItems()"><option value="">All projects</option></select>
+      <select id="typeFilter" onchange="renderItems()"><option value="">All types</option></select>
+    </div>
+    <div id="itemsTable"></div>
+  </div>
+</section>
 
-    <section id="tasks" class="page"><div class="page-title-row"><div><h1>Tasks</h1><p class="sub">Theo dõi công việc theo dự án</p></div><button class="primary" onclick="showToast('Demo: tạo task mới')">＋ New Task</button></div><div class="table-wrap"><table><thead><tr><th>Task</th><th>Project</th><th>Stage</th><th>Owner</th><th>Progress</th><th>Due</th><th>Status</th></tr></thead><tbody id="taskTable"></tbody></table></div></section>
+<section id="timeline" class="view">
+  <div class="panel">
+    <div class="panel-title">Key Dates from SAE</div>
+    <div id="timelineList"></div>
+  </div>
+</section>
 
-    <section id="timeline" class="page"><div class="page-title-row"><div><h1>Timeline</h1><p class="sub">Lộ trình các dự án</p></div></div><div id="timelineView" class="timeline-view"></div></section>
-    <section id="notifications" class="page"><div class="page-title-row"><div><h1>Notifications</h1><p class="sub">Thông báo và phản hồi mới</p></div></div><div class="notification-list"><div>🔔 <b>Nguyễn A</b> đã phản hồi task <b>Drawing Approval</b><small>5 phút trước</small></div><div>💬 <b>Supplier Lima</b> đã gửi một phản hồi mới<small>32 phút trước</small></div><div>⚠️ Dự án <b>ALP-1033</b> sắp đến hạn<small>1 giờ trước</small></div></div></section>
-    <section id="users" class="page"><div class="page-title-row"><div><h1>Users</h1><p class="sub">Người dùng và phân quyền</p></div><button class="primary" onclick="showToast('Demo: thêm user')">＋ Add User</button></div><div class="table-wrap"><table><thead><tr><th>User</th><th>Email</th><th>Role</th><th>Projects</th></tr></thead><tbody><tr><td>Nguyễn Văn A</td><td>a@company.com</td><td><span class="status s-blue">Admin</span></td><td>All</td></tr><tr><td>Trần Minh B</td><td>b@company.com</td><td><span class="status s-green">Manager</span></td><td>4</td></tr><tr><td>Lê C</td><td>c@company.com</td><td><span class="status s-gray">Member</span></td><td>2</td></tr></tbody></table></div></section>
-    <section id="sheets" class="page"><div class="page-title-row"><div><h1>Google Sheet</h1><p class="sub">Nguồn dữ liệu của hệ thống</p></div><button class="primary" onclick="showToast('Đã đồng bộ dữ liệu demo')">↻ Sync now</button></div><div class="sheet-box"><div class="sheet-status">● Connected</div><h3>Project Management Database</h3><p>Website có thể lấy Project / Task / Progress / Deadline từ Google Sheet. Bản demo hiện dùng dữ liệu mẫu.</p><div class="sheet-steps"><span>1. Google Sheet</span><b>→</b><span>2. Sync</span><b>→</b><span>3. Dashboard</span></div></div></section>
-    <section id="alerts" class="page"><div class="page-title-row"><div><h1>Alerts</h1><p class="sub">Các điểm cần xử lý</p></div></div><div id="alertList" class="alert-list"></div></section>
-    <section id="calendar" class="page"><div class="page-title-row"><div><h1>Calendar</h1><p class="sub">Deadline và mốc quan trọng</p></div></div><div class="calendar-demo" id="calendarDemo"></div></section>
-    <section id="performance" class="page"><div class="page-title-row"><div><h1>Performance</h1><p class="sub">Hiệu suất dự án và thành viên</p></div></div><div class="perf-grid"><div class="perf"><b>On-time delivery</b><strong>91%</strong><div class="bar"><i style="width:91%"></i></div></div><div class="perf"><b>Task completion</b><strong>76%</strong><div class="bar"><i style="width:76%"></i></div></div><div class="perf"><b>Response SLA</b><strong>88%</strong><div class="bar"><i style="width:88%"></i></div></div></div></section>
-    <section id="search" class="page"><div class="page-title-row"><div><h1>Search</h1><p class="sub">Tìm project, task, người phụ trách</p></div></div><input class="big-search" placeholder="🔎 Nhập từ khóa..." oninput="globalSearch(this.value)"><div id="searchResults"></div></section>
-    <section id="audit" class="page"><div class="page-title-row"><div><h1>Audit Log</h1><p class="sub">Lịch sử thay đổi</p></div></div><div class="notification-list"><div>📝 Nguyễn A cập nhật Progress 60% → 75%<small>28/08/2026 15:12</small></div><div>👤 Trần B được thêm vào Project ALP-1033<small>28/08/2026 14:40</small></div><div>💬 Lê C thêm comment vào Drawing Approval<small>28/08/2026 13:15</small></div></div></section>
-    <section id="settings" class="page"><div class="page-title-row"><div><h1>Settings</h1><p class="sub">Thiết lập hệ thống</p></div></div><div class="settings-card"><label>Company name<input value="Project Progress"/></label><label>Default reminder<select><option>24 hours before deadline</option><option>48 hours before deadline</option></select></label><label><input type="checkbox" checked> Notify when mentioned</label><button class="primary" onclick="showToast('Đã lưu thiết lập')">Save</button></div></section>
-  </main>
-</div>
+<section id="alerts" class="view">
+  <div class="panel">
+    <div class="panel-title">SAE Alerts / Follow-up</div>
+    <div id="alertsList"></div>
+  </div>
+</section>
 
-<div class="modal" id="projectModal"><div class="modal-box"><div class="modal-head"><h2>New Project</h2><button onclick="closeProjectModal()">✕</button></div><label>Project name<input id="newName" placeholder="VD: Fixture ALP-1035"></label><label>Manager<input id="newManager" placeholder="Tên người phụ trách"></label><label>Deadline<input id="newDeadline" type="date"></label><label>Stage<select id="newStage"><option>OPM</option><option>RD</option><option>Sourcing</option><option>Supplier</option><option>QA</option></select></label><div class="modal-actions"><button onclick="closeProjectModal()">Cancel</button><button class="primary" onclick="createProject()">Create Project</button></div></div></div>
-<div class="toast" id="toast"></div>
+<section id="messages" class="view">
+  <div class="panel message-panel">
+    <div class="panel-title">Project Discussion</div>
+    <p class="muted">Comment/reply is prepared as a separate layer so it does not modify the SAE source data.</p>
+    <div class="message-box">
+      <textarea id="messageText" placeholder="Write a comment or follow-up..."></textarea>
+      <button onclick="addMessage()">Send</button>
+    </div>
+    <div id="messagesList"></div>
+  </div>
+</section>
+
 <script src="app.js"></script>
+</main>
 </body>
 </html>
