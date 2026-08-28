@@ -1,104 +1,54 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SAE Project Progress</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SAE BFIH — V1 Preview</title><link rel="stylesheet" href="style.css"></head><body>
 <aside class="sidebar">
-  <div class="brand">🔧 <b>SAE Progress</b><span>Internal</span></div>
+  <div class="brand"><div class="brand-icon">⚙</div><div><strong>SAE BFIH</strong><small>Project Operations</small></div></div>
+  <div class="section-label">PROJECTS</div>
+  <div class="projects">
+    <button class="project active" data-project="NB"><span class="dot blue"></span><span>NB</span><span class="count">—</span></button>
+    <button class="project" data-project="RF"><span class="dot orange"></span><span>RF</span><span class="count">—</span></button>
+    <button class="project" data-project="Import"><span class="dot green"></span><span>Import</span><span class="count" id="importCount">0</span></button>
+  </div>
+  <div class="section-label menu-label">MENU</div>
   <nav>
-    <a class="active" data-view="dashboard">📊 Dashboard</a>
-    <a data-view="projects">📁 Projects</a>
-    <a data-view="items">📋 SAE Items</a>
-    <a data-view="timeline">📅 Timeline</a>
-    <a data-view="alerts">⚠️ Alerts</a>
-    <a data-view="messages">💬 Messages</a>
+    <a class="active" data-view="dashboard">▦ <span>Dashboard</span></a>
+    <a data-view="search">⌕ <span>Search</span></a>
+    <a data-view="timeline">◷ <span>Timeline</span></a>
+    <a data-view="calendar">▣ <span>Calendar</span></a>
+    <a data-view="performance">◒ <span>Performance</span></a>
+    <a data-view="notifications">♧ <span>Notifications</span><b id="notifyCount">0</b></a>
+    <a data-view="sheets">▤ <span>Google Sheet</span></a>
+    <a data-view="audit">◫ <span>Audit Log</span></a>
+    <a data-view="settings">⚙ <span>Settings</span></a>
   </nav>
-  <div class="side-note">Source<br><b>SAE sheet only</b></div>
+  <div class="logout">↪ <span>Logout</span></div>
 </aside>
-
 <main>
 <header class="topbar">
-  <div>
-    <h1 id="pageTitle">Dashboard</h1>
-    <p>SAE project tracking • data from the <b>SAE</b> sheet only</p>
-  </div>
-  <div class="actions">
-    <button onclick="location.reload()">↻ Refresh</button>
-    <button onclick="exportCSV()">⬇ Export CSV</button>
-  </div>
+ <div><div class="crumb">WORKSPACE / <b id="workspace">NB</b></div><h1 id="title">Dashboard</h1><p>Project tracking &amp; operational overview</p></div>
+ <div class="top-tools">
+   <select id="year"><option>2026</option><option>2025</option></select>
+   <select id="month"><option>All months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+   <select id="week"><option>All weeks</option><option>W35</option><option>W36</option><option>W37</option></select>
+   <input type="date" id="from"><span class="to">to</span><input type="date" id="to">
+   <button>↥ Export</button><button>↧ Import</button><button class="lang">中</button>
+ </div>
 </header>
 
 <section id="dashboard" class="view active">
-  <div class="cards" id="cards"></div>
-
-  <div class="panel">
-    <div class="panel-title">Project Portfolio <span id="projectCount"></span></div>
-    <div id="projectTable"></div>
-  </div>
-
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-title">Build Distribution</div>
-      <div id="buildChart" class="bars"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-title">Fixture Manufacturer</div>
-      <div id="manufacturerChart" class="bars"></div>
-    </div>
-  </div>
+ <div class="hero"><div><h2 id="heroTitle">NB Project Overview</h2><p id="heroSub">Select a project on the left to switch the workspace.</p></div><div class="online"><i></i> Online</div></div>
+ <div class="kpis" id="kpis"></div>
+ <div class="main-grid">
+   <div class="panel"><div class="panel-head"><div><h3>Project Progress</h3><small>Overall status by stage</small></div><button class="small-btn">Details →</button></div><div id="stageProgress"></div></div>
+   <div class="panel chart-panel"><div class="panel-head"><div><h3>Portfolio Mix</h3><small>Current project distribution</small></div></div><div class="donut-wrap"><div class="donut"><div><strong id="donutTotal">0</strong><span>items</span></div></div><div class="legend" id="legend"></div></div></div>
+ </div>
+ <div class="panel"><div class="panel-head"><div><h3>Recent SAE Activity</h3><small>Data from the SAE sheet only</small></div><button class="small-btn" onclick="showView('search')">View all →</button></div><div id="recent"></div></div>
 </section>
 
-<section id="projects" class="view">
-  <div class="panel">
-    <div class="toolbar">
-      <input id="projectSearch" placeholder="Search project, build, PIC, vendor..." oninput="renderProjects()">
-    </div>
-    <div id="projectsTable"></div>
-  </div>
-</section>
-
-<section id="items" class="view">
-  <div class="panel">
-    <div class="toolbar">
-      <input id="itemSearch" placeholder="Search SAE item / spec / vendor..." oninput="renderItems()">
-      <select id="projectFilter" onchange="renderItems()"><option value="">All projects</option></select>
-      <select id="typeFilter" onchange="renderItems()"><option value="">All types</option></select>
-    </div>
-    <div id="itemsTable"></div>
-  </div>
-</section>
-
-<section id="timeline" class="view">
-  <div class="panel">
-    <div class="panel-title">Key Dates from SAE</div>
-    <div id="timelineList"></div>
-  </div>
-</section>
-
-<section id="alerts" class="view">
-  <div class="panel">
-    <div class="panel-title">SAE Alerts / Follow-up</div>
-    <div id="alertsList"></div>
-  </div>
-</section>
-
-<section id="messages" class="view">
-  <div class="panel message-panel">
-    <div class="panel-title">Project Discussion</div>
-    <p class="muted">Comment/reply is prepared as a separate layer so it does not modify the SAE source data.</p>
-    <div class="message-box">
-      <textarea id="messageText" placeholder="Write a comment or follow-up..."></textarea>
-      <button onclick="addMessage()">Send</button>
-    </div>
-    <div id="messagesList"></div>
-  </div>
-</section>
-
-<script src="app.js"></script>
-</main>
-</body>
-</html>
+<section id="search" class="view"><div class="page-title"><h2>Search</h2><p>Search across the SAE dataset</p></div><div class="panel"><div class="filters"><input id="q" placeholder="Search project, build, PIC, vendor, spec…"><select id="filterProject"><option value="">All projects</option></select><select id="filterStatus"><option value="">All dispatch status</option></select></div><div id="results"></div></div></section>
+<section id="timeline" class="view"><div class="page-title"><h2>Timeline</h2><p>Key dates from SAE</p></div><div class="panel" id="timelineList"></div></section>
+<section id="calendar" class="view"><div class="page-title"><h2>Calendar</h2><p>Calendar view prepared for SAE milestones</p></div><div class="panel"><div class="empty">Calendar structure is ready for milestone mapping.</div></div></section>
+<section id="performance" class="view"><div class="page-title"><h2>Performance</h2><p>Project and dispatch performance</p></div><div class="panel" id="performanceBox"></div></section>
+<section id="notifications" class="view"><div class="page-title"><h2>Notifications</h2><p>Follow-up items from SAE</p></div><div class="panel" id="notificationBox"></div></section>
+<section id="sheets" class="view"><div class="page-title"><h2>Google Sheet</h2><p>Connection area for future live sync</p></div><div class="panel"><div class="sheet-card"><b>Google Sheets connection</b><span>Prototype: SAE Excel data loaded locally</span><button class="primary">Connect Google Sheet</button></div></div></section>
+<section id="audit" class="view"><div class="page-title"><h2>Audit Log</h2><p>System activity</p></div><div class="panel"><div class="empty">Audit log will be connected to user actions in the next version.</div></div></section>
+<section id="settings" class="view"><div class="page-title"><h2>Settings</h2><p>Workspace settings</p></div><div class="panel"><div class="settings-row"><span>Language</span><select><option>English</option><option>中文</option></select></div><div class="settings-row"><span>Data source</span><b>SAE sheet</b></div></div></section>
+<script src="app.js"></script></main></body></html>
