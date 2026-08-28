@@ -1,7 +1,8 @@
-# SAE Progress V1
-
-Approved dashboard layout: NB, RF and Import shown together vertically.
-
+# SAE Progress V1.4 — Logic Fixed
+Approved three-workspace dashboard.
 Data source: SAE sheet only.
-Real SAE items (rows with S.No): 81.
-Classification used in V1: NB = Category NB/Set/blank; RF = Category RF/RF Kit; Import = all real SAE items.
+Classification:
+- NB: Category = NB, Set, or blank.
+- RF: Category = RF, RF Kit, or blank.
+- Import: Type = Import.
+No dashboard totals are hard-coded; all counts are calculated from sae_data.json.
