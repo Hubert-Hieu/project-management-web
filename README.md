@@ -1,23 +1,19 @@
-# SAE Project Progress Web
+# SAE Progress — V1
 
-This version uses **only the `SAE` sheet** from `TNES SAE Summary Data.xlsx`.
+Static GitHub Pages version of the SAE project dashboard.
 
-Included:
-- Dashboard
-- Project portfolio
-- SAE item search/filter
-- Build and manufacturer analysis
-- Timeline based on SAE dates
-- Alerts based on SAE fields
-- Local comment/reply area (does not modify source SAE data)
-- CSV export
+## Data source
+- Only the `SAE` sheet is used.
+- `sae_data.json` contains the extracted SAE data used by the prototype.
 
-Data source:
-- 122 SAE records
-- 107 SAE columns
+## Files
+- `index.html` — dashboard structure
+- `style.css` — V1 styling
+- `app.js` — dashboard logic and filters
+- `sae_data.json` — SAE data
 
-To deploy on GitHub Pages, upload:
-- index.html
-- style.css
-- app.js
-- sae_data.json
+## GitHub Pages
+Upload all four files to the repository root, commit to `main`, then configure:
+Settings → Pages → Deploy from a branch → `main` → `/ (root)` → Save.
+
+The site is static and can run directly on GitHub Pages.
